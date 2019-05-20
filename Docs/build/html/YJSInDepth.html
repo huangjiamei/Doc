@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="YJS">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>YJSInDepth &#8212; SmartContractDoc 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="ContractAPI" href="ContractAPI.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="yjsindepth">
+<h1>YJSInDepth<a class="headerlink" href="#yjsindepth" title="Permalink to this headline">¶</a></h1>
+<p>#Layout of a YJS Source File</p>
+<p>##Overview
+YJS source files can contain an arbitrary number of <strong>import statements</strong> and a <strong>contract definition</strong>.</p>
+<p>##Import Statements
+YSJ supports import statements that are very similar to those available in JavaScript(from ES6).
+At a global level, you can use import statements of the following form:</p>
+<p>~~~
+import &quot;filename&quot;;
+~~~
+###Contents
+This statement imports all global symbols (modules) from &quot;filename&quot; (and symbols imported there) into the current global scope.
+###Path
+In the above, <strong>filename</strong> is always treated as a path with <strong>/</strong> as directory separator, <strong>.</strong> as the current and <strong>..</strong> as the parent directory.
+To import a file <strong>x.yjs</strong> from the same directory as the current file, use <strong>import &quot;x.yjs&quot;</strong>.</p>
+<p>##Contract Definition
+###Demo
+In the following example we document the title of the contract, which is for JSON processing.</p>
+<p>~~~
+contract ScoreAdder{</p>
+<blockquote>
+<div><p>//arg =  {&quot;action&quot;:&quot;main&quot;,&quot;arg&quot;:&quot;[{&quot;score&quot;:20},{&quot;score&quot;:20}]&quot;}
+export function main(arg){</p>
+<blockquote>
+<div><p>//JSON is a build-in object.
+var point = JSON.parse(arg);
+var s = 0;
+print(point[0].score);
+print(point.length);
+for (var i=0;i&lt;point.length;i++){</p>
+<blockquote>
+<div>s+=point[i].score/1.0;</div></blockquote>
+<p>}
+print(&quot;total score= &quot;+s);
+return s;</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<div class="section" id="id1">
+<h2>}<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>###Comments
+Single-line comments(<strong>//</strong>) and multi-line comments(<strong>/*...*/</strong>) are possible.</p>
+<p>~~~
+// This is a single-line comment.
+/*</p>
+<blockquote>
+<div><ul class="simple">
+<li>This is a</li>
+<li>multi-line comment.</li>
+</ul>
+<p><a href="#id2"><span class="problematic" id="id3">*</span></a>/</p>
+</div></blockquote>
+<p>~~~</p>
+<p>###Structure
+Contracts in YJS are similar to classes in Javascript. Each contract can contain a number of <strong>variables</strong>, <strong>functions</strong> and <strong>events</strong>.</p>
+<p>####Variables
+Variables in YJS are similar to variables in JavaScript(from ES6). There are <strong>global variables</strong> and <strong>local variables</strong>.</p>
+<p>Global variables:</p>
+<p>~~~
+judge =  true;
+~~~
+Local variables:</p>
+<p>~~~
+var judge = &quot;This is a string&quot;;
+~~~</p>
+<p>The types of variables are so-called value types because types will always be passed by value.</p>
+<p>####Functions
+Functions are the executable units of code within a contract. There are two types of funcions. Except for common functions, functions can be defined as exported functions by using <strong>export</strong>.</p>
+<p>Here are the differences between exported fuctions and common functions.</p>
+<ol class="arabic simple">
+<li>Only exported function can be exported to other contracts.</li>
+<li>Exported function can have only one parameter and the type required to be &quot;String&quot;.</li>
+<li>The return type of exported function must be &quot;String&quot;.</li>
+<li>The build-in field, requester(the public key of requester), is only available in exported functions. But there is an exception. Requester is availabe in &quot;onCreate()&quot; function originally and this function can execute automatically.</li>
+</ol>
+<p>####Events
+Events in YJS are similar to events in Solidity.</p>
+<p>The publisher define an event which contains an event-publish function, then publish it through function call.</p>
+<p>The subscriber subscribe and handle this event.</p>
+<p>There is an event demo as follows:</p>
+<p>EventPuber.yjs</p>
+<p>~~~
+contract EventPuber{</p>
+<blockquote>
+<div><p>event abcEvent;
+export function pub(arg){</p>
+<blockquote>
+<div>abcEvent(arg);
+return &quot;done!&quot;;</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</div>
+<div class="section" id="id4">
+<h2>}<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>EventSuber.yjs</p>
+<p>~~~
+contract EventSuber{</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>export function init(arg){</dt>
+<dd>YancloudUtil.subscribe(&quot;EventPuber&quot;,&quot;abcEvent&quot;,handler);</dd>
+</dl>
+<p>print(&quot;Handler:&quot;+handler);
+}
+function handler(e){
+var ret = &quot;ReceiveEvent:&quot;+(e.type)+&quot; &quot;+(e.content);</p>
+<blockquote>
+<div>print(ret);</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</div>
+<div class="section" id="id5">
+<h2>}<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>##YJS Projects
+Except for the single YJS source file which contains only one contract, There are <strong>contract projects</strong>.</p>
+<p>Each contract project contains kinds of files which will be used during the execute of contract, such as <strong>&quot;mainfest.json&quot;</strong>, <strong>&quot;.yjs&quot;</strong>, <strong>&quot;.js&quot;</strong>, <strong>&quot;.txt&quot;</strong>,**&quot;.jar&quot;<a href="#id6"><span class="problematic" id="id7">**</span></a>,  ...</p>
+<p>###&quot;Manifest.json&quot;
+Each contract project also must have an <strong>mainfest.json</strong> file(with precisely that name) at the root of the project source set. The manifest file describes essential information about the constract to the YJS build tools, the YJS Engine.
+####Manifest Structure
+The manifest file is required to declare the following:</p>
+<ol class="arabic simple">
+<li><strong>main</strong>: the file to be executed.</li>
+<li><strong>type</strong>: the type of contract, such as Data/Algorithm/...</li>
+<li><strong>builder</strong>: the name of person who bulid this YJS project.</li>
+<li><strong>permissions</strong>: TODO</li>
+<li><strong>pyDependences</strong>: the needed python dependences.</li>
+</ol>
+<p>####Manifest Demo</p>
+<p>~~~
+{</p>
+<blockquote>
+<div><blockquote>
+<div><p>&quot;main&quot;: &quot;contract.js&quot;,
+&quot;type&quot;: &quot;Data&quot;,
+&quot;builder&quot;: &quot;caihq&quot;,
+&quot;permissions&quot;: [],
+&quot;pyDependences&quot;: [
+{</p>
+<blockquote>
+<div><p>&quot;name&quot;: &quot;yjsexample&quot;,
+&quot;modules&quot;: [</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>{</dt>
+<dd>&quot;name&quot;: &quot;sample&quot;</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</div></blockquote>
+</div>
+<div class="section" id="id8">
+<h2>}<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h2>
+<p>###&quot;.jar&quot;
+Jar file achieved the <a href="#id9"><span class="problematic" id="id10">**</span></a>cross-language interoperatility**(including YJS-Java, YJS-Python, ...
+) through packing the Java class file or the Python file with the YJS file, then the contract can use the functions of Java and Python.
+####YJS-Java
+Java class:</p>
+<p>~~~
+package your.own.package;
+public class HelloWorld {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>public static int fun(String arg){</dt>
+<dd>return arg.length;</dd>
+</dl>
+<p>}
+public int fun2(String arg){</p>
+<blockquote>
+<div>return arg.length;</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</div>
+<div class="section" id="id11">
+<h2>}<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h2>
+<p>InvokeJava.yjs</p>
+<p>~~~
+contract InvokeJava{</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>export function main(arg){</dt>
+<dd>var hello = new your.own.package.HelloWorld();
+return your.own.package.HelloWorld.fun(arg)+hello.fun2(arg);</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+</div>
+<div class="section" id="id12">
+<h2>}<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p>####YJS-Python
+TODO</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">SmartContractDoc</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="ContractAPI.html">ContractAPI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">YJSInDepth</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">}</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">}</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">}</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">}</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">}</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">}</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="ContractAPI.html" title="previous chapter">ContractAPI</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Vera.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/YJSInDepth.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
